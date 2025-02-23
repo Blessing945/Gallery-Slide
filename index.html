@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery Slider</title>
+</head>
+<body>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: peru;
+}
+
+.slider-container {
+    position: relative;
+    max-width: 300px;
+    margin: 50px auto;
+    overflow: hidden;
+}
+
+.slider {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+}
+
+.slide {
+    min-width: 100%;
+    overflow: hidden;
+}
+
+img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.prev, .next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px;
+    height: 50px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color:purple;
+    font-size: 24px;
+    text-align: center;
+    line-height: 50px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.prev {
+    left: 0;
+    border-radius: 0 5px 5px 0;
+}
+
+.next {
+    right: 0;
+    border-radius: 5px 0 0 5px;
+}
+
+.prev:hover, .next:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* Optional: Add some styling for the file input and buttons for adding/deleting images */
+input[type="file"] {
+    display: block;
+}
+
+
+button {
+    padding: 10px;
+    margin: 10px;
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+    </style>
+
+
+
+
+<div class="slider-container">
+    <div class="slider">
+        <div class="slide">
+            <img src="Avocado_Toast.jpg" alt="Image 1">
+        </div>
+        <div class="slide">
+            <img src="Bread.jpg" alt="Image 2">
+        </div>
+        <div class="slide">
+            <img src="chickenleg_pap.jpg" alt="Image 3">
+        </div>
+     
+    </div>
+
+    <div class="prev" onclick="prevSlide()">&#10094;</div>
+    <div class="next" onclick="nextSlide()">&#10095;</div>
+
+    <input type="file" id="imageInput" accept="image/*">
+    <button onclick="addImage()">Add Image</button>
+    <button onclick="deleteImage()">Delete Image</button>
+</div>
+
+<script>
+    let currentSlide = 0;
+
+    function showSlide(index) {
+        const slider = document.querySelector('.slider');
+        const slides = document.querySelectorAll('.slide');
+
+        if (index >= slides.length) {
+            currentSlide = 0;
+        } else if (index < 0) {
+            currentSlide = slides.length - 1;
+        } else {
+            currentSlide = index;
+        }
+
+        const translateValue = -currentSlide * 100 + '%';
+        slider.style.transform = 'translateX(' + translateValue + ')';
+    }
+
+    function prevSlide() {
+        showSlide(currentSlide - 1);
+    }
+
+    function nextSlide() {
+        showSlide(currentSlide + 1);
+    }
+
+    function addImage() {
+        const input = document.getElementById('imageInput');
+        const file = input.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const newSlide = document.createElement('div');
+                newSlide.classList.add('slide');
+
+                const newImage = document.createElement('img');
+                newImage.src = e.target.result;
+                newImage.alt = 'New Image';
+
+                newSlide.appendChild(newImage);
+
+                const slider = document.querySelector('.slider');
+                slider.appendChild(newSlide);
+
+                // Show the newly added image
+                showSlide(slider.children.length - 1);
+            };
+
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function deleteImage() {
+        const slider = document.querySelector('.slider');
+        const slides = document.querySelectorAll('.slide');
+
+        if (slides.length > 1) {
+            slider.removeChild(slides[currentSlide]);
+
+            // Adjust current slide index if the last slide is deleted
+            if (currentSlide >= slides.length - 1) {
+                currentSlide--;
+            }
+
+            // Show the updated slider
+            showSlide(currentSlide);
+        }
+    }
+</script>
+    
+</body>
+</html>
